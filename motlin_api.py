@@ -75,21 +75,46 @@ def get_authorization_headers(access_keeper):
     return headers
 
 
-def get_all_products(access_keeper):
+def get_products(access_keeper, category_id=None):
     """Get list of products
     :param access_keeper: object, Access class instance
+    :param category_id: str, id of category for filtering
     :return: list of dicts, list of products where product is dict
     """
     logger.debug('getting products...')
     headers = get_authorization_headers(access_keeper)
 
-    response = requests.get('https://api.moltin.com/v2/products', headers=headers)
+    filters = None
+    if category_id:
+        logger.debug(f'filtering by category={category_id}')
+        filters = {
+            'filter': f'eq(category.id,{category_id})'
+        }
+
+    response = requests.get('https://api.moltin.com/v2/products', headers=headers, params=filters)
     response.raise_for_status()
 
     products = response.json()['data']
     logger.debug(f'{len(products)} products was got')
 
     return products
+
+
+def get_all_categories(access_keeper):
+    """Get list of categories
+    :param access_keeper: object, Access class instance
+    :return: list of dicts, list of categories where category is dict
+    """
+    logger.debug('getting categories...')
+    headers = get_authorization_headers(access_keeper)
+
+    response = requests.get('https://api.moltin.com/v2/categories', headers=headers)
+    response.raise_for_status()
+
+    categories = response.json()['data']
+    logger.debug(f'{len(categories)} categories was got')
+
+    return categories
 
 
 def get_product_by_id(access_keeper, product_id):
@@ -422,3 +447,37 @@ def get_all_entries_of_flow(access_keeper, flow_slug):
     logger.debug(f'{len(entries)} entries was got')
 
     return entries
+
+
+def create_integration(access_keeper, webhook_url):
+    """Add webhook integration with motlin
+    :param access_keeper: object, Access class instance
+    :param webhook_url: str, url of server which will get information from motlin
+    """
+    logger.debug('creating webhook integration...')
+    headers = get_authorization_headers(access_keeper)
+    headers['Content-Type'] = 'application/json'
+
+    integration = {
+        "data": {
+            "type": "integration",
+            "name": "Product notification",
+            "description": "Send notification about products manipulations.",
+            "enabled": True,
+            "observes": [
+                "product.created",
+                "product.updated",
+                "product.deleted",
+            ],
+            "integration_type": "webhook",
+            "configuration": {
+                "url": webhook_url,
+                "secret_key": access_keeper.client_secret
+            }
+        }
+    }
+
+    response = requests.post('https://api.moltin.com/v2/integrations', headers=headers, json=integration)
+    response.raise_for_status()
+
+    logger.debug('webhook integration created...')

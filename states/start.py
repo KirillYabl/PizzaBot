@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def start(update: Update, context: CallbackContext, page_number: int = 1) -> str:
     """Bot /start command."""
     bot = context.bot
-    products = motlin_api.get_all_products(context.bot_data['access_keeper'])
+    products = motlin_api.get_products(context.bot_data['access_keeper'])
     chat_id = update.effective_chat.id
     cart_items_info = motlin_api.get_cart_items_info(context.bot_data['access_keeper'], chat_id)
     products_in_cart = {product['product_id']: product for product in cart_items_info['products']}

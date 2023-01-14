@@ -1,4 +1,4 @@
-# Telegram Pizza Bot
+# Pizza Bot
 
 ### Overview
 
@@ -14,7 +14,24 @@ MVP of telegram shop with:
 ![screenshot_1](images/screenshot_1.png)
 ![screenshot_1](images/screenshot_2.png)
 
+MVP of facebook shop with:
+
+- menu
+- product descriptions
+- cart
+
 ### How to install
+
+#### Start
+
+Python3 should be already installed.
+Then use `pip` (or `pip3`, if there is a conflict with Python2) to install dependencies:
+
+```
+pip install -r requirements.txt
+```
+
+#### Telegram
 
 You need to create `.env` file and write next parameters in file:
 
@@ -60,18 +77,33 @@ This data is stored in `address_fields -> slug` for each field.
 
 `PROXY` - proxy IP with port and https if you need. Work with empty proxy if you in Europe.
 
-Python3 should be already installed.
-Then use `pip` (or `pip3`, if there is a conflict with Python2) to install dependencies:
-
-```
-pip install -r requirements.txt
-```
-
 Then optional run script `load_init_data.py` to load some init data and create models in moltin:
 
 ```
 python load_init_data.py
 ```
+
+#### Facebook
+Create shop page on facebook
+Create app on facebook developer
+Add to your ap webhook and facebook messenger products
+
+Left or add settings from telegram.
+You need this keys from telegram part env:
+`MOTLIN_CLIENT_ID`, `MOTLIN_CLIENT_SECRET`, `REDIS_DB_ADDRESS`, `REDIS_DB_PORT`, `REDIS_DB_PASSWORD`
+
+`FB_VERIFY_TOKEN` - token of your webhook app in facebook
+`FB_PAGE_ACCESS_TOKEN` - token of your bot page in facebook
+`PIZZA_LOGO_URL` - url with your shop image
+`MAIN_CATEGORY_ID` - main pizza category id in motlin (because you can't shaw all, only 10)
+`CART_IMAGE_URL` - url with your cart image
+
+Get domain with https and run bot on this domain
+```
+python fb_bot.py
+```
+In facebook developer link your domain with webhook
+Add subscription on messages for your page
 
 ### How to use
 

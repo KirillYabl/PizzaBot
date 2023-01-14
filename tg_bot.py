@@ -60,7 +60,7 @@ def handle_users_reply(update: Update, context: CallbackContext) -> None:
 
     if user_reply == '/start':
         user_state = 'START'
-        context.bot_data['db'].set(chat_id, user_state)
+        context.bot_data['db'].set(f'telegramid_{chat_id}', user_state)
     else:
         user_state = context.bot_data['db'].get(chat_id).decode("utf-8")
 
@@ -77,7 +77,7 @@ def handle_users_reply(update: Update, context: CallbackContext) -> None:
     }
     state_handler = states_functions[user_state]
     next_state = state_handler(update, context)
-    context.bot_data['db'].set(chat_id, next_state)
+    context.bot_data['db'].set(f'telegramid_{chat_id}', next_state)
 
 
 def error(update: Update, context: CallbackContext) -> None:
